@@ -1,2 +1,6 @@
-export * from './lib/async';
-export * from './lib/number';
+
+function test() {
+    console.log('Hello Lambad');
+}
+
+test();
