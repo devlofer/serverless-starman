@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    # This S3 bucket will be used to store the packaged Lambda deployment bundle.
+    # Make sure to provide a valid S3 bucket name (it must exist already).
+    # The AWS CodeBuild IAM role must allow write access to it.
+    S3_BUCKET: 'devlofer-starman-serverless'
+    PACKAGE: 'starman'
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+  pre_build:
+    commands:
+      - echo Installing NPM dependencies...
+      - npm install
+  build:
+    commands:
+      - echo Build started on `date`
+      - npm run build
+  post_build:
+    commands:
+      - aws cloudformation package --template-file template.yml --s3-bucket ${S3_BUCKET} --output-template-file packaged.yml
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - packaged.yml
